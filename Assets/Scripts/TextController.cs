@@ -54,13 +54,18 @@ public class TextController : MonoBehaviour
             "2. Talk to them\n" +
             "3. Ignore them";
 
-        if (Input.GetKeyDown(KeyCode.Alpha1)) {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
             player_choice = Choice.Choice1;
             player_state = State.Prison;
-        } else if (Input.GetKeyDown(KeyCode.Alpha2)) {
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
             player_choice = Choice.Choice2;
             player_state = State.Prison;
-        } else if (Input.GetKeyDown(KeyCode.Alpha3)) {
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
             player_choice = Choice.Choice3;
             player_state = State.Prison;
         }
@@ -75,13 +80,18 @@ public class TextController : MonoBehaviour
             "2.\n" +
             "3.";
 
-        if (Input.GetKeyDown(KeyCode.Alpha1)) {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
             player_choice = Choice.Choice1;
             player_state = State.Start;
-        } else if (Input.GetKeyDown(KeyCode.Alpha2)) {
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
             player_choice = Choice.Choice2;
             player_state = State.Start;
-        } else if (Input.GetKeyDown(KeyCode.Alpha3)) {
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
             player_choice = Choice.Choice3;
             player_state = State.Start;
         }
