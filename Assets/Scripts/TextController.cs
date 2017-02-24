@@ -13,15 +13,16 @@ public class TextController : MonoBehaviour
     State player_state;
     Choice player_choice;
 
-	// Use this for initialization
-	void Start()
+    // Use this for initialization
+    void Start()
     {
         player_state = State.Start;
-	}
+    }
 
-	// Update is called once per frame
-	void Update()
+    // Update is called once per frame
+    void Update()
     {
+        LogPlayer();
         switch (player_state)
         {
             case State.Start:
@@ -31,7 +32,7 @@ public class TextController : MonoBehaviour
                 PrisonScene();
                 break;
         }
-	}
+    }
 
     void LogPlayer()
     {
@@ -41,7 +42,6 @@ public class TextController : MonoBehaviour
 
     void StartScene()
     {
-        LogPlayer();
         text.text =
             "You and your wife, Catelyn, are on a trip to the city " +
             "to set up shop in the market. It's been a rough year, " +
@@ -73,7 +73,6 @@ public class TextController : MonoBehaviour
 
     void PrisonScene()
     {
-        LogPlayer();
         text.text =
             "Prison Scene Text\n\n" +
             "1.\n" +
