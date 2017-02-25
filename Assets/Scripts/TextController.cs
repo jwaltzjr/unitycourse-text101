@@ -11,14 +11,21 @@ public class TextController : MonoBehaviour
     {
         Opening, Opening_Bandits,
         Prison, Prison_Visited, Prison_Yell, Prison_Walls, Prison_Bed,
-            Prison_Door, Prison_Door_Push, Prison_Door_Squeeze,
+        Prison_Door, Prison_Door_Push, Prison_Door_Squeeze, Prison_Door_Key,
     };
+
     State player_state;
+
+    bool FoundKey;
+    bool HayBundle;
 
     // Use this for initialization
     void Start()
     {
         player_state = State.Opening;
+
+        FoundKey = false;
+        HayBundle = false;
     }
 
     // Update is called once per frame
@@ -54,11 +61,15 @@ public class TextController : MonoBehaviour
                 Prison_Door();
                 break;
             case State.Prison_Door_Push:
-                Prison_Door();
+                Prison_Door_Push();
                 break;
             case State.Prison_Door_Squeeze:
-                Prison_Door();
+                Prison_Door_Squeeze();
                 break;
+            case State.Prison_Door_Key:
+                Prison_Door_Key();
+                break;
+
         }
     }
 
@@ -105,8 +116,8 @@ public class TextController : MonoBehaviour
     {
         text.text =
             "You wake up in a cell with stone walls, an area covered in " +
-            "hay that you assume is a makeshift bed, and a bucket that's " +
-            "filling the area with a foul scent.\n\n" +
+            "bundles of hay that you assume is a makeshift bed, and a bucket " +
+            "that's filling the area with a foul scent.\n\n" +
 
             "Press Y to Yell for Catelyn\n" +
             "Press W to check out the Walls\n" +
@@ -192,39 +203,161 @@ public class TextController : MonoBehaviour
 
     void Prison_Bed()
     {
+        if (FoundKey && !HayBundle)
+        {
+            text.text =
+                "You see the bundles of hay that make up the bed and wonder... " +
+                "would one of these be long enough to reach?\n\n" +
+
+                "Press H to grab a bundle of Hay\n" +
+                "Press Space to return.";
+
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                player_state = State.Prison_Visited;
+            }
+            if (Input.GetKeyDown(KeyCode.H))
+            {
+                HayBundle = true;
+                player_state = State.Prison_Visited;
+            }
+        }
+        else
+        {
+            text.text =
+                "That looks uncomfortable.\n\n" +
+
+                "Press Space to return.";
+
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                player_state = State.Prison_Visited;
+            }
+        }
+
+    }
+
+    void Prison_Door()
+    {
+        if (FoundKey && HayBundle)
+        {
+            text.text =
+                "The door is locked. Outside is a stone corridor, but you " +
+                "can't see much.\n\n" +
+
+                "Press P to Push on the door\n" +
+                "Press S to Squeeze through the bars\n" +
+                "Press K to reach for the Key\n" +
+
+                "Press Space to return to the cell";
+
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                player_state = State.Prison_Visited;
+            }
+            else if (Input.GetKeyDown(KeyCode.P))
+            {
+                player_state = State.Prison_Door_Push;
+            }
+            else if (Input.GetKeyDown(KeyCode.S))
+            {
+                player_state = State.Prison_Door_Squeeze;
+            }
+            else if (Input.GetKeyDown(KeyCode.K))
+            {
+                player_state = State.Prison_Door_Key;
+            }
+        }
+        else
+        {
+            text.text =
+                "The bar door is locked. Outside is a stone corridor, but you " +
+                "can't see much.\n\n" +
+
+                "Press P to Push on the door\n" +
+                "Press S to Squeeze through the bars\n\n" +
+
+                "Press Space to return to the cell";
+
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                player_state = State.Prison_Visited;
+            }
+            else if (Input.GetKeyDown(KeyCode.P))
+            {
+                player_state = State.Prison_Door_Push;
+            }
+            else if (Input.GetKeyDown(KeyCode.S))
+            {
+                player_state = State.Prison_Door_Squeeze;
+            }
+        }
+    }
+
+    void Prison_Door_Push()
+    {
         text.text =
-            "That looks uncomfortable.\n\n" +
+            "You push on the bars but they won't budge.\n\n" +
 
             "Press Space to return.";
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            player_state = State.Prison_Visited;
+            player_state = State.Prison_Door;
         }
     }
 
-    void Prison_Door()
+    void Prison_Door_Squeeze()
+    {
+        if (HayBundle)
+        {
+            text.text =
+                "You try to squeeze through the bars, but you can only get your " +
+                "head through. You look around and see a set of keys hanging " +
+                "next to the cell! You wonder if you can reach it with the bundle " +
+                "of hay...\n\n" +
+
+                "Press K to reach for the Key\n" +
+                "Press Space to return.";
+
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    player_state = State.Prison_Door;
+                }
+                else if (Input.GetKeyDown(KeyCode.K))
+                {
+                    player_state = State.Prison_Door_Key;
+                }
+        }
+        else
+        {
+            text.text =
+                "You try to squeeze through the bars, but you can only get your " +
+                "head through. You look around and see a set of keys hanging " +
+                "next to the cell! You wish you could reach them...\n\n" +
+
+                "Press Space to return.";
+
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    player_state = State.Prison_Door;
+                }
+        }
+
+        FoundKey = true;
+
+    }
+
+    void Prison_Door_Key()
     {
         text.text =
-            "The bar door is locked. Outside is a stone corridor, but you " +
-            "can't see much.\n\n" +
+            "\n\n" +
 
-            "Press P to Push on the door\n" +
-            "Press S to Squeeze through the bars\n\n" +
-
-            "Press Space to return to the prison";
+            "Press Space to return.";
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            player_state = State.Prison_Visited;
-        }
-        else if (Input.GetKeyDown(KeyCode.P))
-        {
-            player_state = State.Prison_Door_Push;
-        }
-        else if (Input.GetKeyDown(KeyCode.S))
-        {
-            player_state = State.Prison_Door_Squeeze;
+            player_state = State.Prison_Door;
         }
     }
 
