@@ -10,13 +10,15 @@ public class TextController : MonoBehaviour
     enum State
     {
         Opening, Opening_Bandits,
-        Prison, Prison_Visited, Prison_Yell, Prison_Walls, Prison_Bed,
-        Prison_Door, Prison_Door_Push, Prison_Door_Squeeze, Prison_Door_Key,
+        Cell, Cell_Visited, Cell_Yell, Cell_Walls, Cell_Bed,
+        Cell_Door, Cell_Door_Push, Cell_Door_Squeeze, Cell_Door_Key,
+        Corridor,
     };
 
     State player_state;
 
     bool FoundKey;
+    bool AquiredKey;
     bool HayBundle;
 
     // Use this for initialization
@@ -25,6 +27,7 @@ public class TextController : MonoBehaviour
         player_state = State.Opening;
 
         FoundKey = false;
+        AquiredKey = false;
         HayBundle = false;
     }
 
@@ -32,6 +35,7 @@ public class TextController : MonoBehaviour
     void Update()
     {
         print(player_state);
+
         switch (player_state)
         {
             case State.Opening:
@@ -41,35 +45,38 @@ public class TextController : MonoBehaviour
                 Opening_Bandits();
                 break;
 
-            case State.Prison:
-                Prison();
+            case State.Cell:
+                Cell();
                 break;
-            case State.Prison_Visited:
-                Prison_Visited();
+            case State.Cell_Visited:
+                Cell_Visited();
                 break;
-            case State.Prison_Yell:
-                Prison_Yell();
+            case State.Cell_Yell:
+                Cell_Yell();
                 break;
-            case State.Prison_Walls:
-                Prison_Walls();
+            case State.Cell_Walls:
+                Cell_Walls();
                 break;
-            case State.Prison_Bed:
-                Prison_Bed();
-                break;
-
-            case State.Prison_Door:
-                Prison_Door();
-                break;
-            case State.Prison_Door_Push:
-                Prison_Door_Push();
-                break;
-            case State.Prison_Door_Squeeze:
-                Prison_Door_Squeeze();
-                break;
-            case State.Prison_Door_Key:
-                Prison_Door_Key();
+            case State.Cell_Bed:
+                Cell_Bed();
                 break;
 
+            case State.Cell_Door:
+                Cell_Door();
+                break;
+            case State.Cell_Door_Push:
+                Cell_Door_Push();
+                break;
+            case State.Cell_Door_Squeeze:
+                Cell_Door_Squeeze();
+                break;
+            case State.Cell_Door_Key:
+                Cell_Door_Key();
+                break;
+
+            case State.Corridor:
+                Corridor();
+                break;
         }
     }
 
@@ -108,11 +115,11 @@ public class TextController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            player_state = State.Prison;
+            player_state = State.Cell;
         }
     }
 
-    void Prison()
+    void Cell()
     {
         text.text =
             "You wake up in a cell with stone walls, an area covered in " +
@@ -126,23 +133,23 @@ public class TextController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Y))
         {
-            player_state = State.Prison_Yell;
+            player_state = State.Cell_Yell;
         }
         else if (Input.GetKeyDown(KeyCode.W))
         {
-            player_state = State.Prison_Walls;
+            player_state = State.Cell_Walls;
         }
         else if (Input.GetKeyDown(KeyCode.B))
         {
-            player_state = State.Prison_Bed;
+            player_state = State.Cell_Bed;
         }
         else if (Input.GetKeyDown(KeyCode.D))
         {
-            player_state = State.Prison_Door;
+            player_state = State.Cell_Door;
         }
     }
 
-    void Prison_Visited()
+    void Cell_Visited()
     {
         text.text =
             "You're in the cell that you woke up in. The longer you stay " +
@@ -156,23 +163,23 @@ public class TextController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Y))
         {
-            player_state = State.Prison_Yell;
+            player_state = State.Cell_Yell;
         }
         else if (Input.GetKeyDown(KeyCode.W))
         {
-            player_state = State.Prison_Walls;
+            player_state = State.Cell_Walls;
         }
         else if (Input.GetKeyDown(KeyCode.B))
         {
-            player_state = State.Prison_Bed;
+            player_state = State.Cell_Bed;
         }
         else if (Input.GetKeyDown(KeyCode.D))
         {
-            player_state = State.Prison_Door;
+            player_state = State.Cell_Door;
         }
     }
 
-    void Prison_Yell()
+    void Cell_Yell()
     {
         text.text =
             "You yell for your wife, but no one replies. Not even any " +
@@ -182,11 +189,11 @@ public class TextController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            player_state = State.Prison_Visited;
+            player_state = State.Cell_Visited;
         }
     }
 
-    void Prison_Walls()
+    void Cell_Walls()
     {
         text.text =
             "The walls are made of stone, which means you're not in the " +
@@ -197,11 +204,11 @@ public class TextController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            player_state = State.Prison_Visited;
+            player_state = State.Cell_Visited;
         }
     }
 
-    void Prison_Bed()
+    void Cell_Bed()
     {
         if (FoundKey && !HayBundle)
         {
@@ -214,12 +221,12 @@ public class TextController : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                player_state = State.Prison_Visited;
+                player_state = State.Cell_Visited;
             }
             if (Input.GetKeyDown(KeyCode.H))
             {
                 HayBundle = true;
-                player_state = State.Prison_Visited;
+                player_state = State.Cell_Visited;
             }
         }
         else
@@ -231,15 +238,33 @@ public class TextController : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                player_state = State.Prison_Visited;
+                player_state = State.Cell_Visited;
             }
         }
 
     }
 
-    void Prison_Door()
+    void Cell_Door()
     {
-        if (FoundKey && HayBundle)
+        if (AquiredKey)
+        {
+            text.text =
+                "The door is locked, but you have the key!. Outside is a stone corridor, but you " +
+                "can't see much.\n\n" +
+
+                "Press U to unlock the cell door\n" +
+                "Press Space to return to the cell";
+
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                player_state = State.Cell_Visited;
+            }
+            else if (Input.GetKeyDown(KeyCode.U))
+            {
+                player_state = State.Corridor;
+            }
+        }
+        else if (FoundKey && HayBundle)
         {
             text.text =
                 "The door is locked. Outside is a stone corridor, but you " +
@@ -253,19 +278,19 @@ public class TextController : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                player_state = State.Prison_Visited;
+                player_state = State.Cell_Visited;
             }
             else if (Input.GetKeyDown(KeyCode.P))
             {
-                player_state = State.Prison_Door_Push;
+                player_state = State.Cell_Door_Push;
             }
             else if (Input.GetKeyDown(KeyCode.S))
             {
-                player_state = State.Prison_Door_Squeeze;
+                player_state = State.Cell_Door_Squeeze;
             }
             else if (Input.GetKeyDown(KeyCode.K))
             {
-                player_state = State.Prison_Door_Key;
+                player_state = State.Cell_Door_Key;
             }
         }
         else
@@ -281,20 +306,20 @@ public class TextController : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                player_state = State.Prison_Visited;
+                player_state = State.Cell_Visited;
             }
             else if (Input.GetKeyDown(KeyCode.P))
             {
-                player_state = State.Prison_Door_Push;
+                player_state = State.Cell_Door_Push;
             }
             else if (Input.GetKeyDown(KeyCode.S))
             {
-                player_state = State.Prison_Door_Squeeze;
+                player_state = State.Cell_Door_Squeeze;
             }
         }
     }
 
-    void Prison_Door_Push()
+    void Cell_Door_Push()
     {
         text.text =
             "You push on the bars but they won't budge.\n\n" +
@@ -303,11 +328,11 @@ public class TextController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            player_state = State.Prison_Door;
+            player_state = State.Cell_Door;
         }
     }
 
-    void Prison_Door_Squeeze()
+    void Cell_Door_Squeeze()
     {
         if (HayBundle)
         {
@@ -322,11 +347,11 @@ public class TextController : MonoBehaviour
 
                 if (Input.GetKeyDown(KeyCode.Space))
                 {
-                    player_state = State.Prison_Door;
+                    player_state = State.Cell_Door;
                 }
                 else if (Input.GetKeyDown(KeyCode.K))
                 {
-                    player_state = State.Prison_Door_Key;
+                    player_state = State.Cell_Door_Key;
                 }
         }
         else
@@ -340,7 +365,7 @@ public class TextController : MonoBehaviour
 
                 if (Input.GetKeyDown(KeyCode.Space))
                 {
-                    player_state = State.Prison_Door;
+                    player_state = State.Cell_Door;
                 }
         }
 
@@ -348,16 +373,34 @@ public class TextController : MonoBehaviour
 
     }
 
-    void Prison_Door_Key()
+    void Cell_Door_Key()
     {
         text.text =
-            "\n\n" +
+            "You reach out for the keys, but it's difficult to get the hay into the key ring. " +
+            "After a few tries, you finally get it!\n\n" +
 
             "Press Space to return.";
 
+        AquiredKey = true;
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            player_state = State.Prison_Door;
+            player_state = State.Cell_Door;
+        }
+    }
+
+    void Corridor()
+    {
+        text.text =
+            "Corridor Text\n\n" +
+
+            "Press buttons to do stuff.";
+
+        AquiredKey = true;
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            player_state = State.Corridor;
         }
     }
 
