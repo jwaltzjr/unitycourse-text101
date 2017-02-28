@@ -2,8 +2,6 @@
 using UnityEngine.UI;
 using System.Collections;
 
-// TEST GIT BRANCHING
-
 public class TextController : MonoBehaviour
 {
 
