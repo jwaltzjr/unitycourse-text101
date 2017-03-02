@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 
@@ -12,7 +12,8 @@ public class TextController : MonoBehaviour
         Opening, Opening_Bandits,
         Cell, Cell_Visited, Cell_Yell, Cell_Walls, Cell_Bed,
         Cell_Door, Cell_Door_Push, Cell_Door_Squeeze, Cell_Door_Key,
-        Corridor,
+        Corridor, Corridor_Visited, Corridor_Door,
+        Cell2
     };
 
     State player_state;
@@ -20,15 +21,12 @@ public class TextController : MonoBehaviour
     bool FoundKey;
     bool AquiredKey;
     bool HayBundle;
+    bool EscapedPrison;
 
     // Use this for initialization
     void Start()
     {
-        player_state = State.Opening;
-
-        FoundKey = false;
-        AquiredKey = false;
-        HayBundle = false;
+        BeginGame();
     }
 
     // Update is called once per frame
@@ -38,6 +36,10 @@ public class TextController : MonoBehaviour
 
         switch (player_state)
         {
+            case State.Restart:
+                BeginGame();
+                break;
+
             case State.Opening:
                 Opening();
                 break;
@@ -77,7 +79,28 @@ public class TextController : MonoBehaviour
             case State.Corridor:
                 Corridor();
                 break;
+            case State.Corridor_Visited:
+                Corridor_Visited();
+                break;
+            case State.Corridor_Door:
+                Corridor_Door();
+                break;
+
+            case State.Cell2:
+                Cell2();
+                break;
         }
+    }
+
+    void BeginGame()
+    {
+        print("Game started.");
+        player_state = State.Opening;
+
+        FoundKey = false;
+        AquiredKey = false;
+        HayBundle = false;
+        EscapedPrison = false;
     }
 
     void Opening()
@@ -249,8 +272,8 @@ public class TextController : MonoBehaviour
         if (AquiredKey)
         {
             text.text =
-                "The door is locked, but you have the key!. Outside is a stone corridor, but you " +
-                "can't see much.\n\n" +
+                "The door is locked, but you have the key!. Outside is a stone" +
+                "corridor, but you can't see much.\n\n" +
 
                 "Press U to unlock the cell door\n" +
                 "Press Space to return to the cell";
@@ -376,8 +399,8 @@ public class TextController : MonoBehaviour
     void Cell_Door_Key()
     {
         text.text =
-            "You reach out for the keys, but it's difficult to get the hay into the key ring. " +
-            "After a few tries, you finally get it!\n\n" +
+            "You reach out for the keys, but it's difficult to get the hay into the " +
+            "key ring. After a few tries, you finally get it!\n\n" +
 
             "Press Space to return.";
 
@@ -392,15 +415,103 @@ public class TextController : MonoBehaviour
     void Corridor()
     {
         text.text =
-            "Corridor Text\n\n" +
+            "You take a step forward, keeping an eye out for anyone, but it's hard to " +
+            "see in the dark. You notice a staircase on one end of the hallway that " +
+            "leads to a door with a window. Through it, you can see the flickering " +
+            "light of a fire. There is another door on the other side of the hall, but " +
+            "there's no window on this one.\n\n" +
 
-            "Press buttons to do stuff.";
+            "Press S to take the Stairs to the door with a window.\n" +
+            "Press D to take the opposite Door, into the unknown.";
 
-        AquiredKey = true;
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            player_state = State.WestPath;
+        }
+        else if (Input.GetKeyDown(KeyCode.D))
+        {
+            player_state = State.Corridor_Door;
+        }
+    }
+
+    void Corridor_Visited()
+    {
+        text.text =
+            "You're back in the corridor outside of your cell. It's very dark.\n\n" +
+
+            "Press S to take the Stairs to the door with a window.\n" +
+            "Press D to take the opposite Door, into the unknown.";
+
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            player_state = State.WestPath;
+        }
+        else if (Input.GetKeyDown(KeyCode.D))
+        {
+            player_state = State.Corridor_Door;
+        }
+    }
+
+    void Corridor_Door()
+    {
+        text.text =
+            "You crack the door and peer through. You notice a man sitting at the table, " +
+            "but he doesn't notice you.\n\n" +
+
+            "Press C to continue.\n" +
+            "Press Space to return.";
+
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            player_state = State.Cell2;
+        }
+        else if (Input.GetKeyDown(KeyCode.D))
+        {
+            player_state = State.Corridor_Visited;
+        }
+    }
+
+    void Cell2()
+    {
+        text.text =
+            "You walk in, trying to be as quiet as possible, but the man hears the door " +
+            "creak. He immediately jumps to his feet and draws a sword, ready for a " +
+            "fight. You attempt to grab him but he plunges the sword into your chest. " +
+            "Amidst the pain, you hear your wife crying. Was she here? Or is your mind " +
+            "playing tricks on you? You ponder this, but there's too much blood in your " +
+            "mouth to call for her. The world fades to black...\n\n" +
+
+            "GAME OVER\n\n" +
+            "Press Space to try again.";
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            player_state = State.Corridor;
+            player_state = State.Restart;
+        }
+    }
+
+    void WestPath()
+    {
+        if (EscapedPrison)
+        {
+            text.text =
+            "WestPath text.\n\n" +
+
+            "Press Space to return.";
+        }
+        else
+        {
+            text.text =
+            "WestPath text.\n\n" +
+
+            "Press Space to return."; 
+        }
+
+        EscapedPrison = true;
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            player_state = State.Corridor_Visited;
         }
     }
 
