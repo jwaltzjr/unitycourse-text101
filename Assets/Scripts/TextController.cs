@@ -13,7 +13,8 @@ public class TextController : MonoBehaviour
         Cell, Cell_Visited, Cell_Yell, Cell_Walls, Cell_Bed,
         Cell_Door, Cell_Door_Push, Cell_Door_Squeeze, Cell_Door_Key,
         Corridor, Corridor_Visited, Corridor_Door,
-        Cell2
+        Cell2,
+        WestPath
     };
 
     State player_state;
@@ -88,6 +89,10 @@ public class TextController : MonoBehaviour
 
             case State.Cell2:
                 Cell2();
+                break;
+
+            case State.WestPath:
+                WestPath();
                 break;
         }
     }
@@ -502,17 +507,21 @@ public class TextController : MonoBehaviour
         else
         {
             text.text =
-            "WestPath text.\n\n" +
+            "You take the stairs and peek through the window. You don't see anyone, so " +
+            "you open the door. To your left you see the source of the flickering light: " +
+            "a group of bandits are lounging around a fire, talking and laughing too loud " +
+            "to notice you. Across from you is another building, and there's a path headed " +
+            "off to your right.\n\n" +
 
-            "Press Space to return."; 
+            "Press F to head towards the Fire.\n" +
+            "Press B to go into the Building.\n" +
+            "Press P to follow the Path." + 
+            "Press C to go back to the prison Cells.\n"; 
         }
 
         EscapedPrison = true;
 
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            player_state = State.Corridor_Visited;
-        }
+        // INPUT CONTROLS
     }
 
 }
