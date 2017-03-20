@@ -516,12 +516,33 @@ public class TextController : MonoBehaviour
             "Press F to head towards the Fire.\n" +
             "Press B to go into the Building.\n" +
             "Press P to follow the Path." + 
-            "Press C to go back to the prison Cells.\n"; 
+            "Press D to go return to the Dungeon.\n"; 
         }
 
         EscapedPrison = true;
 
         // INPUT CONTROLS
+    }
+
+    void Fire()
+    {
+        text.text =
+        "You walk towards the fire, making as little noise as possible. You count at least 6 " +
+        "men, but it's still dark so you can't be sure. From your left you hear a shout, \"Hey! " +
+        "That farmer escaped!\" You turn around on the spot and start sprinting away, but the man " +
+        "that shouted is too quick. He pins you on the ground, allowing the rest of the camp to " +
+        "catch up. You can hear hear them talking in angered voices...\n\n" +
+        "\"Should we throw him back in the dungeon?\"\n" +
+        "\"No, too risky. He got out once already.\"\n\n" +
+        "That was the last thing you ever heard.\n\n" +
+
+        "GAME OVER\n\n" +
+        "Press Space to try again.";
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            player_state = State.Restart;
+        }
     }
 
 }
